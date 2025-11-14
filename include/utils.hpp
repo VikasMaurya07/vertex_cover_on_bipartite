@@ -12,6 +12,7 @@ using namespace std;
 
 namespace Utils
 {
+    static void build_left_adj(const vector<vector<int>> &graph, const vector<int> &left, const vector<int> &right, vector<vector<int>> &adj_left, vector<int> &right_indices);
     class if_Bipartite
     {
     public:
@@ -30,6 +31,7 @@ namespace Utils
                 {
                     if (cols[neigh] == 0)
                     {
+                        cols[neigh] = col;
                         if (!dfs(neigh))
                             return false;
                     }
@@ -207,11 +209,92 @@ namespace Utils
             cout << "Graph is not Bipartite\n";
             return {};
         }
-
         // compute maximum matching (left->right)
         vector<int> matching = find_matching(graph, left, right);
-
         // compute min vertex cover using the matching
+        vector<int> cover = minimum_vertex_cover(graph, left, right, matching);
+        return cover;
+    }
+
+    // If left and right subgraphs are provided by the user itself
+    static vector<int> vertex_cover_bipartite_LR_present(const vector<vector<int>> &graph, vector<int> left, vector<int> right)
+    {
+        int n = (int)graph.size();
+
+        // --- Basic validation: indices in range ---
+        for (int u : left)
+        {
+            if (u < 0 || u >= n)
+            {
+                cout << "Invalid vertex in left: " << u << "\n";
+                return {};
+            }
+        }
+        for (int u : right)
+        {
+            if (u < 0 || u >= n)
+            {
+                cout << "Invalid vertex in right: " << u << "\n";
+                return {};
+            }
+        }
+
+        // --- Check duplicates inside left/right and build membership sets ---
+        unordered_set<int> setL, setR;
+        for (int u : left)
+        {
+            if (!setL.insert(u).second)
+            {
+                cout << "Duplicate vertex in left: " << u << "\n";
+                return {};
+            }
+        }
+        for (int u : right)
+        {
+            if (!setR.insert(u).second)
+            {
+                cout << "Duplicate vertex in right: " << u << "\n";
+                return {};
+            }
+        }
+
+        // --- Check overlap between left and right ---
+        for (int u : left)
+        {
+            if (setR.count(u))
+            {
+                cout << "Vertex " << u << " appears in both left and right sets.\n";
+                return {};
+            }
+        }
+
+        // --- Check for internal edges within left or within right ---
+        // If any edge (u,v) exists with both endpoints in left or both in right -> invalid partition
+        for (int u : left)
+        {
+            for (int v : graph[u])
+            {
+                if (setL.count(v))
+                {
+                    cout << "Invalid partition: edge " << u << " - " << v << " is inside left set.\n";
+                    return {};
+                }
+            }
+        }
+        for (int u : right)
+        {
+            for (int v : graph[u])
+            {
+                if (setR.count(v))
+                {
+                    cout << "Invalid partition: edge " << u << " - " << v << " is inside right set.\n";
+                    return {};
+                }
+            }
+        }
+
+        // --- Good partition: compute maximum matching and minimum vertex cover ---
+        vector<int> matching = find_matching(graph, left, right);
         vector<int> cover = minimum_vertex_cover(graph, left, right, matching);
         return cover;
     }
@@ -238,7 +321,7 @@ namespace Utils
                 if (v >= 0 && v < (int)right_indices.size())
                     rv = right_indices[v];
                 if (rv != -1)
-                    adj_left[u].push_back(rv);
+                    adj_left[i].push_back(rv);
             }
         }
     }
