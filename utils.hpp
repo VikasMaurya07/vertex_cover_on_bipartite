@@ -67,13 +67,47 @@ namespace Utils
     };
 
     // Kuhn's algorithm (bipartite matching) on adj_left where left indices are 0..L-1 and right indices are 0..R-1
-    
+    static void kuhn_match(const vector<vector<int>> &adj_left, vector<int> &matchR, vector<int> &matchL)
+    {
+        int L = (int)adj_left.size();
+        int R = (int)matchR.size();
 
-    // to find matchng from left to right
-    static vector<int> find_matching(const vector<vector<int>> &graph, const vector<int> &left, const vector<int> &right) {
+        function<bool(int, vector<char> &)> dfs = [&](int u, vector<char> &seen) -> bool
+        {
+            for (int v : adj_left[u])
+            {
+                if (seen[v])
+                    continue;
+                seen[v] = 1;
+                if (matchR[v] == -1 || dfs(matchR[v], seen))
+                {
+                    matchR[v] = u;
+                    matchL[u] = v;
+                    return true;
+                }
+            }
+            return false;
+        };
 
+        for (int u = 0; u < L; ++u)
+        {
+            vector<char> seen(R, 0);
+            dfs(u, seen);
+        }
     }
 
+    // to find matchng from left to right
+    static vector<int> find_matching(const vector<vector<int>> &graph, const vector<int> &left, const vector<int> &right)
+    {
+        vector<vector<int>> adj_left;
+        vector<int> right_indices;
+        build_left_adj(graph, left, right, adj_left, right_indices);
+
+        int L = (int)left.size();
+        int R = (int)right.size();
+        vector<int> matchR(R, -1), matchL(L, -1);
+        kuhn_match(adj_left, matchR, matchL); // provides matching
+    }
 
     // Public API, computing min vertex if graph is bipartite
     static vector<int> vertex_cover_bipartite(const vector<vector<int>> &graph)
@@ -90,5 +124,29 @@ namespace Utils
     }
 
     ///-------------------------------Helper Functions ------------------------------------------//
-    
+    static void build_left_adj(const vector<vector<int>> &graph, const vector<int> &left, const vector<int> &right, vector<vector<int>> &adj_left, vector<int> &right_indices)
+    {
+        int L = (int)left.size();
+        int R = (int)right.size();
+        adj_left.assign(L, {});
+        right_indices.assign(graph.size(), -1);
+
+        for (int j = 0; j < R; j++)
+        {
+            right_indices[right[j]] = j;
+        }
+
+        for (int i = 0; i < L; i++)
+        {
+            int u = left[i];
+            for (int v : graph[u])
+            {
+                int rv = -1;
+                if (v >= 0 && v < (int)right_indices.size())
+                    rv = right_indices[v];
+                if (rv != -1)
+                    adj_left[u].push_back(rv);
+            }
+        }
+    }
 }
