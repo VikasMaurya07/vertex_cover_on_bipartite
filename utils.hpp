@@ -107,6 +107,95 @@ namespace Utils
         int R = (int)right.size();
         vector<int> matchR(R, -1), matchL(L, -1);
         kuhn_match(adj_left, matchR, matchL); // provides matching
+
+        // map back to original ids
+        vector<int> match_left_org(graph.size(), -1);
+        for (int i = 0; i < L; i++)
+        {
+            if (matchL[i] != -1)
+            {
+                int u_org = left[i];
+                int v_org = right[matchL[i]];
+                match_left_org[u_org] = v_org;
+            }
+        }
+        return match_left_org;
+    }
+
+    // finding the minimum vertex cover from the given bipartite matching  (König's theorem)
+    static vector<int> minimum_vertex_cover(const vector<vector<int>> &graph, vector<int> &left, vector<int> &right, vector<int> &matching)
+    {
+        vector<vector<int>> adj_left;
+        vector<int> right_indices;
+        build_left_adj(graph, left, right, adj_left, right_indices);
+
+        int L = (int)left.size();
+        int R = (int)right.size();
+        vector<int> matchR(R, -1), matchL(L, -1);
+
+        for (int i = 0; i < L; i++)
+        {
+            int u_org = left[i];
+            int v_org = matching[u_org];
+
+            if (v_org != -1)
+            {
+                int v_id = right_indices[v_org];
+
+                if (v_id != -1)
+                {
+                    matchL[i] = v_id;
+                    matchR[v_id] = i;
+                }
+            }
+        }
+        // Start DFS from unmatched left vertices using alternating (non-matching then matching) edges
+        vector<bool> visL(L, 0), visR(R, 0);
+        stack<int> st;
+
+        for (int i = 0; i < L; i++)
+        {
+            if (matchL[i] == -1)
+            {
+                st.push(i);
+                visL[i] = 1;
+            }
+        }
+
+        while (!st.empty())
+        {
+            int u = st.top();
+            st.pop();
+            for (int v_id : adj_left[u])
+            {
+                // we traverse only edges not in matching from left -> right
+                if (matchL[u] == v_id)
+                    continue; // traverse only non matched edges
+                if (!visR[v_id])
+                {
+                    visR[v_id] = 1;
+                    // from right, follow the matching edge (if present) back to left
+                    if (matchR[v_id] != -1 && !visL[matchR[v_id]])
+                    {
+                        visL[matchR[v_id]] = 1;
+                        st.push(matchR[v_id]);
+                    }
+                }
+            }
+        }
+        // Min vertex cover = (all left vertices NOT visited) U (all right vertices visited)
+        vector<int> cover;
+        for (int i = 0; i < L; ++i)
+        {
+            if (!visL[i])
+                cover.push_back(left[i]); // original id
+        }
+        for (int j = 0; j < R; ++j)
+        {
+            if (visR[j])
+                cover.push_back(right[j]); // original id
+        }
+        return cover;
     }
 
     // Public API, computing min vertex if graph is bipartite
@@ -121,6 +210,10 @@ namespace Utils
 
         // compute maximum matching (left->right)
         vector<int> matching = find_matching(graph, left, right);
+
+        // compute min vertex cover using the matching
+        vector<int> cover = minimum_vertex_cover(graph, left, right, matching);
+        return cover;
     }
 
     ///-------------------------------Helper Functions ------------------------------------------//

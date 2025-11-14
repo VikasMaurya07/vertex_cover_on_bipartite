@@ -2,5 +2,5 @@ Problem ----> Graph ----> Is Graph bipartite ----> Applying max matching on the 
 
 To do;
 if bipartite algo .... done
-max matching on bipartite .... next
+max matching on bipartite .... done
 Problems .... next
