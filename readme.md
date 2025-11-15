@@ -11,7 +11,7 @@ This report is organized as follows: we first present the theoretical background
 
 ---
 
-## Vertex Cover Problem
+## 🎯 Vertex Cover Problem
 Given a graph $ G = (V, E) $;
 A **vertex cover** is a set of vertices $C \subseteq V $ such that **every edge** in $ E $ has at least one endpoint in $ C $. Formally:
 
@@ -53,7 +53,7 @@ Since maximum independent set is also NP-hard, so is minimum vertex cover.
 
 ---
 
-## **What is a Matching?**
+## 🎯 **What is a Matching?**
 
 Given a graph $G = (V, E)$ a **matching** $M \subseteq E$ is a set of edges such that **no two edges share a common vertex**. Formally:
 $$
@@ -117,7 +117,7 @@ X2 --- Y2
 
 ---
 
-## König’s theorem
+## 🎯 König’s theorem
 In any finite bipartite graph $G=(X\cup Y, E)$ the size of a maximum matching equals the size of a minimum vertex cover:
 $$\tau(G)=\nu(G) $$
 Where $\tau(G)$ is the maximum number of pairwise disjoint edges (maximum matching size) and $\nu(G)$ is the minimum number of vertices meeting every edge (minimum vertex cover size). We prove $\tau(G)\le\nu(G)$ and then show $\nu(G)\le\tau(G)$ by constructing a vertex cover of size equal to a maximum matching.
@@ -176,7 +176,7 @@ Thus every vertex in $C=(X\setminus Z_X)\cup Z_Y$ is matched by $M$. Moreover, e
 > Therefore the matched edges give a bijection between elements of $M$ and vertices of $C$: each matched edge contributes exactly one vertex to $C$, and every vertex of $C$ is matched and corresponds to a distinct matched edge. So $|C|=|M|$.
 
 ---
-## Implementation of Bipartite Vertex Cover Problem
+## 🎯 Implementation of Bipartite Vertex Cover Problem
 **Directory:** ```bip_vertex_cover```
 **Problem Statement:** To find the **Veterx Cover** of an input Bipartite Graph, and to visualise the results using a python script.
 #### Implementation Workflow:
@@ -190,7 +190,7 @@ Thus every vertex in $C=(X\setminus Z_X)\cup Z_Y$ is matched by $M$. Moreover, e
 * The outputs from the `main` are passed on to the `visualise.py` as directive for plotting graphs and representing the vertex cover.
 * `run_all.sh` is a bash script to automate the process of creating graph plots.
 
-#### Kuhn’s Algorithm — Explanation (Short)
+#### Kuhn’s Algorithm:
 Kuhn’s algorithm is a **DFS-based augmenting path algorithm** for maximum bipartite matching.
 1. For each left vertex $u$, try to find an augmenting path using DFS.
 2. If an unmatched right vertex is found, or we can re-route an existing match, we match $u$.
@@ -199,7 +199,7 @@ Kuhn’s algorithm is a **DFS-based augmenting path algorithm** for maximum bipa
    * returns false.
 > Worst case: **O(V × E)**
 
-#### Minimum Vertex Cover Using König’s Theorem
+#### Minimum Vertex Cover Using König’s Theorem:
 Given a maximum matching $M$, the minimum vertex cover in bipartite graphs is computed by:
 1. Mark all **unmatched left vertices**.
 2. Run DFS/BFS alternating between:
@@ -217,24 +217,21 @@ Given a maximum matching $M$, the minimum vertex cover in bipartite graphs is co
   DFS alternation: **O(V + E)**
   Total: **O(V × E)** (due to matching step dominating)
 
-
-
-#### Python Visualization Workflow
+#### Python Visualization Workflow:
 A Python script reads the C++ output:
 * Draws the original graph using NetworkX
 * Colors:
   * **Vertex cover nodes** in green
   * Others in blue
   * Improper edges in dashed red (if user-specified L/R fails)
-* Saves images into `visuals/graph_i.png`
+* Saves images into `visuals/case_i.png`
 
 Run as:
-
 ```bash
 python3 visualize.py < output_for_python.txt
 ```
 
-#### Input Format (`tests.txt`)
+#### Input Format (`tests.txt`):
 Each test case:
 
 ```
@@ -255,9 +252,9 @@ Example:
 ```
 
 Output: 
-<img src="bip_vertex_cover/visuals/graph_1.png" width="450">
+<img src="bip_vertex_cover/visuals/graph_1.png" width="550">
 
-#### Running Everything
+#### Running Everything:
 
 We provide a script `run_all.sh`, to run everything at once. Run with:
 
@@ -266,7 +263,7 @@ We provide a script `run_all.sh`, to run everything at once. Run with:
 ```
 ---
 
-## Chart Minimisation Problem
+## 🎯 Chart Minimisation Problem
 **Directory:** ```chart_minimisation```
 **Problem Statement:** Given the price history of $ n $ stocks over $ k $ time points, we want to visualize these stocks using the **minimum number of charts**, where:
   * Each chart may display **multiple stocks**, and
@@ -292,7 +289,7 @@ This problem can be extended to a range of real world problems such as;
 * Layering and Ranking in Graph Drawing
 * Comparative Genomics / DNA Sequence Evolution
 
-#### Graph-Theoretic Reformulation
+#### Graph-Theoretic Reformulation:
 1. Create a directed edge $ A \to B $ if stock $ A $ is strictly lower than stock $ B $ at all time points.
 2. Convert this DAG into a bipartite graph by duplicating nodes into Left and Right partitions.
 3. Find the **maximum bipartite matching**, which corresponds to the maximum number of stock pairs that can be placed consecutively on a single chart.
@@ -301,16 +298,112 @@ $$
 \text{Minimum Charts} = n - \text{size of maximum matching}
 $$
 
+#### Dilworth's Theorem:
+Dilworth’s Theorem is a fundamental result in order theory that connects two important concepts in a **partially ordered set (poset)**: 
+* **Chains** → sequences where every pair of elements is comparable
+* **Antichains** → sets where no two elements are comparable
+> In any poset, the minimum number of chains required to cover all elements equals the size of the largest antichain. In simpler terms: If many elements cannot be compared with each other (a large antichain exists), we need at least that many chains to cover the set.
+
+In the Chart Minimisation problem:
+  * Each stock is an element in a poset (defined by dominance of prices).
+  * Each chart corresponds to a **chain** of comparable stocks.
+  * The minimum number of charts equals the size of the largest antichain.
+
+Using bipartite matching, we compute this via the equivalent formulation:
+$$
+\text{Minimum Path Cover} = n - \text{Maximum Matching}
+$$
 
 #### Implementation Workflow:
 
 * The C++ driver program ```main.cpp``` reads multiple test cases from ```tests.txt```.
-
-* The outputs from the `main` are passed on to the `visualise.py` as directive for plotting graphs and representing the vertex cover.
+* The stock data is passed to the `MinCharts` functions, which creates the required Bipartite Graph of stock data.
+* The `find_matching` function of `utils.hpp` outputs the maximum matching of the bipartite graph, using Kuhn's algo.
+* This matching is then passed to the `build_chain` function of `utils_chart.hpp` which outputs the chart groupings for all the stocks.
+* The outputs from the `main` are passed on to the `visualise.py` as directive for plotting the data. Here we plot all the stocks on one cchart and show which stock belongs to which chart number using colors.
 * `run_all.sh` is a bash script to automate the process of creating graph plots.
 
-## References
+#### Algorithm for finding Chart Groupings:
+Once the maximum bipartite matching has been computed (where each stock appears once on the left and once on the right), we convert the matching into **actual chart groups**. Each group corresponds to one **directed chain** of stocks that can be plotted together on the same chart. The algorithm consists of three main steps:
 
-https://cp-algorithms.com/graph/kuhn_maximum_bipartite_matching.html
+**1. Build Successor and Predecessor Maps:**
+From the matching result:
+* If left-stock $ u $ is matched to right-stock $ v $, we create a **successor** link $ u \rightarrow v $
+* At the same time, we mark $ u $ as the **predecessor** of $ v $.
 
-https://en.wikipedia.org/wiki/Vertex_cover
+This produces two arrays:
+* `succ[u] = v` → the next stock in the chain
+* `pred[v] = u` → the previous stock in the chain
+All unmatched stocks simply have `succ = -1` and `pred = -1`. These links represent how stocks can be arranged sequentially in a valid chart.
+
+**2. Identify Chain Starts and Build Chains**
+A chain must start at a stock with **no predecessor**. For every such stock:
+* Start walking forward using `succ`
+* Collect all stocks along the path
+* Stop when no further successor exists or when a repeated node would introduce a cycle
+
+Each walk yields **one complete chart group**. This constructs all “maximal” chains corresponding to maximum matching.
+
+> **Total Complexity:** 
+  Building adjacency: **O(E)**
+  Max Matching: **O(V × E)**
+  Chart grouping: **O(V + E)**
+  Total: **O(V × E)** (due to matching step dominating)
+
+#### Python Visualization Workflow:
+A Python script reads the C++ output:
+* Draws the charts using MatplotLib
+* Colors the same for all the stocks belonging to the same chart
+* Saves images into `visuals/graph_i.png`
+
+Run as:
+```bash
+python3 visualize.py < output_for_python.txt
+```
+#### Input Format (`tests.txt`):
+Each test case:
+
+```
+num_stocks num_points
+p1 p2 ... pn
+p1 p2 ... pn
+...
+```
+
+Example:
+
+```
+5 5
+1 2 3 4 6
+2 3 4 6 7
+6 5 4 3 1
+3 4 5 2 3
+67 34 12 9 0
+```
+Output:
+<img src="chart_minimisation/visuals/case_4.png" width="550">
+
+#### Running Everything:
+
+We provide a script `run_all.sh`, to run everything at once. Run with:
+
+```bash
+./run_all.sh
+```
+---
+
+## 📚 References
+
+* **Kuhn’s Algorithm: Maximum Bipartite Matching**
+  [https://cp-algorithms.com/graph/kuhn_maximum_bipartite_matching.html](https://cp-algorithms.com/graph/kuhn_maximum_bipartite_matching.html)
+
+* **Vertex Cover (Graph Theory)**
+  [https://en.wikipedia.org/wiki/Vertex_cover](https://en.wikipedia.org/wiki/Vertex_cover)
+
+* **Dilworth’s Theorem (Posets & Chain Decomposition)**
+  [https://www.geeksforgeeks.org/dsa/dilworths-theorem/](https://www.geeksforgeeks.org/dsa/dilworths-theorem/)
+
+* **Kőnig’s Theorem: Vertex Cover = Maximum Matching (Bipartite)**
+  [https://en.wikipedia.org/wiki/K%C5%91nig%27s_theorem_(graph_theory)](https://en.wikipedia.org/wiki/K%C5%91nig%27s_theorem_%28graph_theory%29)
+
+
