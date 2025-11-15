@@ -9,6 +9,10 @@ This report is organized as follows: we first present the theoretical background
   </a>
 </p>
 
+**View this report Online** [Click Here]( https://vikasmaurya07.github.io/temp_for_pdf/)
+
+     
+
 ---
 
 ## 🎯 Vertex Cover Problem
