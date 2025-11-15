@@ -1,489 +1,313 @@
-## ⚙️ 1. **What is a Matching?**
+# Vertex Cover Problem On Bipartite Graphs
+In this project, we study the NP-hard **Vertex Cover** problem, focusing on a special and tractable class of graphs: **bipartite graphs**. We implement the fundamental algorithms designed specifically for this case and build a framework that can be applied to real-world scenarios; most notably, computing the vertex cover of a bipartite graph and solving a practical application: determining the **minimum number of charts** required to display the price movements of multiple stocks.
 
-Given a graph ( G = (V, E) ):
+This report is organized as follows: we first present the theoretical background, then discuss the key theorems and algorithms, and finally develop and apply the code to these real-world problems. Click the link below for GitHub repo.
 
-A **matching** ( M \subseteq E ) is a set of edges such that **no two edges share a common vertex**.
-
-Formally:
-[
-\forall (u_1,v_1),(u_2,v_2)\in M,\quad {u_1,v_1}\cap{u_2,v_2} = \emptyset
-]
-
-So each vertex is incident to **at most one edge** of the matching.
+<p align="left">
+  <a href="https://github.com/VikasMaurya07/vertex_cover_on_bipartite.git">
+    <img src="https://img.shields.io/badge/GitHub-Repo-blue?logo=github&style=for-the-badge" />
+  </a>
+</p>
 
 ---
 
-## 💎 2. **Maximum Matching Problem**
+## Vertex Cover Problem
+Given a graph $ G = (V, E) $;
+A **vertex cover** is a set of vertices $C \subseteq V $ such that **every edge** in $ E $ has at least one endpoint in $ C $. Formally:
 
-The **maximum matching problem** asks:
+$$\forall (u, v) \in E,\quad u \in C \text{ or } v \in C$$
 
-> Find a matching ( M ) of **maximum cardinality** (i.e., with the largest number of edges).
+> A vertex cover “touches” every edge; no edge is left completely uncovered.
 
-That is:
-[
-\text{Maximize } |M| \quad \text{subject to } M \text{ is a matching in } G
-]
+The **Vertex Cover Problem** asks to find a vertex cover of **minimum possible size**. Mathematically:
+$$ \text{Minimize } |C| \text{ such that } C \text{ is a vertex cover of } G $$
 
----
-
-## 🧩 3. **Example**
-
-Graph:
-
-```
-A --- B --- C --- D
-```
-
-Edges: ( {(A,B), (B,C), (C,D)} )
-
-Possible matchings:
-
-* ( M_1 = {(A,B)} )
-* ( M_2 = {(B,C)} )
-* ( M_3 = {(C,D)} )
-* ( M_4 = {(A,B), (C,D)} ) ✅ (no shared vertices)
-
-Maximum matching size = **2** (edges: (A,B) and (C,D)).
-
----
-
-## 🧭 4. **Types of Matchings**
-
-| Type                 | Meaning                                                                             |
-| -------------------- | ----------------------------------------------------------------------------------- |
-| **Matching**         | No two edges share a vertex                                                         |
-| **Maximum Matching** | Matching with the largest number of edges                                           |
-| **Perfect Matching** | Every vertex is matched (no free vertex)                                            |
-| **Maximal Matching** | Cannot add more edges without violating matching property (not necessarily maximum) |
-
-Example:
-Every **perfect matching** is **maximum**, but not every **maximum** matching is perfect.
-
----
-
-## 🔍 5. **Why It Matters**
-
-* It’s the “dual” of the **vertex cover problem** (via **König’s theorem** in bipartite graphs).
-* It’s a fundamental **combinatorial optimization** problem.
-* Appears in:
-
-  * Job assignment
-  * Stable marriage problem
-  * Network flow formulations
-  * Scheduling and resource allocation
-
----
-
-## 🧮 6. **Algorithmic View**
-
-### For **bipartite graphs**:
-
-* The problem can be solved in **polynomial time**.
-* **Hopcroft–Karp algorithm** → ( O(E\sqrt{V}) )
-* Can also be reduced to a **maximum flow** problem.
-
-### For **general (non-bipartite)** graphs:
-
-* Solved using **Edmonds’ Blossom algorithm** (polynomial time but more complex).
-
----
-
-## ⚖️ 7. **Connection to Vertex Cover (König’s Theorem)**
-
-In bipartite graphs:
-[
-\boxed{\text{Size of Maximum Matching } = \text{Size of Minimum Vertex Cover}}
-]
-So — the set of matched edges (maximum matching) “dually corresponds” to the smallest number of vertices needed to cover all edges.
-
----
-
-## 💡 Example Combining Both
-
-Let’s take the bipartite graph:
-
-```
-X1 --- Y1
- |      |
- |      |
-X2 --- Y2
-```
-
-Edges:
-( E = {(X1,Y1), (X1,Y2), (X2,Y1), (X2,Y2)} )
-
-* Maximum Matching: size = 2 (e.g. ( (X1,Y1), (X2,Y2) ))
-* Minimum Vertex Cover: size = 2 (e.g. ( {X1, X2} ))
-
-✅ Matches König’s theorem perfectly.
-
----
-
-Would you like me to show **how the maximum matching problem can be solved via max-flow formulation** (step-by-step construction)?
-## ⚙️ 1. **What is a Matching?**
-
-Given a graph ( G = (V, E) ):
-
-A **matching** ( M \subseteq E ) is a set of edges such that **no two edges share a common vertex**.
-
-Formally:
-[
-\forall (u_1,v_1),(u_2,v_2)\in M,\quad {u_1,v_1}\cap{u_2,v_2} = \emptyset
-]
-
-So each vertex is incident to **at most one edge** of the matching.
-
----
-
-## 💎 2. **Maximum Matching Problem**
-
-The **maximum matching problem** asks:
-
-> Find a matching ( M ) of **maximum cardinality** (i.e., with the largest number of edges).
-
-That is:
-[
-\text{Maximize } |M| \quad \text{subject to } M \text{ is a matching in } G
-]
-
----
-
-## 🧩 3. **Example**
-
-Graph:
-
-```
-A --- B --- C --- D
-```
-
-Edges: ( {(A,B), (B,C), (C,D)} )
-
-Possible matchings:
-
-* ( M_1 = {(A,B)} )
-* ( M_2 = {(B,C)} )
-* ( M_3 = {(C,D)} )
-* ( M_4 = {(A,B), (C,D)} ) ✅ (no shared vertices)
-
-Maximum matching size = **2** (edges: (A,B) and (C,D)).
-
----
-
-## 🧭 4. **Types of Matchings**
-
-| Type                 | Meaning                                                                             |
-| -------------------- | ----------------------------------------------------------------------------------- |
-| **Matching**         | No two edges share a vertex                                                         |
-| **Maximum Matching** | Matching with the largest number of edges                                           |
-| **Perfect Matching** | Every vertex is matched (no free vertex)                                            |
-| **Maximal Matching** | Cannot add more edges without violating matching property (not necessarily maximum) |
-
-Example:
-Every **perfect matching** is **maximum**, but not every **maximum** matching is perfect.
-
----
-
-## 🔍 5. **Why It Matters**
-
-* It’s the “dual” of the **vertex cover problem** (via **König’s theorem** in bipartite graphs).
-* It’s a fundamental **combinatorial optimization** problem.
-* Appears in:
-
-  * Job assignment
-  * Stable marriage problem
-  * Network flow formulations
-  * Scheduling and resource allocation
-
----
-
-## 🧮 6. **Algorithmic View**
-
-### For **bipartite graphs**:
-
-* The problem can be solved in **polynomial time**.
-* **Hopcroft–Karp algorithm** → ( O(E\sqrt{V}) )
-* Can also be reduced to a **maximum flow** problem.
-
-### For **general (non-bipartite)** graphs:
-
-* Solved using **Edmonds’ Blossom algorithm** (polynomial time but more complex).
-
----
-
-## ⚖️ 7. **Connection to Vertex Cover (König’s Theorem)**
-
-In bipartite graphs:
-[
-\boxed{\text{Size of Maximum Matching } = \text{Size of Minimum Vertex Cover}}
-]
-So — the set of matched edges (maximum matching) “dually corresponds” to the smallest number of vertices needed to cover all edges.
-
----
-
-## 💡 Example Combining Both
-
-Let’s take the bipartite graph:
-
-```
-X1 --- Y1
- |      |
- |      |
-X2 --- Y2
-```
-
-Edges:
-( E = {(X1,Y1), (X1,Y2), (X2,Y1), (X2,Y2)} )
-
-* Maximum Matching: size = 2 (e.g. ( (X1,Y1), (X2,Y2) ))
-* Minimum Vertex Cover: size = 2 (e.g. ( {X1, X2} ))
-
-✅ Matches König’s theorem perfectly.
-
----
-
-Would you like me to show **how the maximum matching problem can be solved via max-flow formulation** (step-by-step construction)?
-
-
-
-## 🧩 **1. Definition — Vertex Cover Problem**
-
-Given a graph ( G = (V, E) ):
-
-A **vertex cover** is a set of vertices ( C \subseteq V ) such that **every edge** in ( E ) has at least one endpoint in ( C ).
-Formally:
-[
-\forall (u, v) \in E,\quad u \in C \text{ or } v \in C
-]
-
-In words:
-
-> A vertex cover “touches” every edge — no edge is left completely uncovered.
-
----
-
-## 🎯 **2. The Vertex Cover Problem**
-
-The **Vertex Cover Problem** asks:
-
-> Find a vertex cover of **minimum possible size**.
-
-Mathematically:
-[
-\text{Minimize } |C| \text{ such that } C \text{ is a vertex cover of } G.
-]
-
----
-
-## 💡 Example
-
+### Example:
 Consider this simple graph:
 
 ```
    A --- B --- C
 ```
 
-Edges: ( {(A,B), (B,C)} )
+Possible vertex covers:
 
-* Possible vertex covers:
+  * $ C = [B] $  (covers both edges)
+  * $ C = [A,C] $  (also covers both edges)
+  * $ C = [A,B,C] $  (but not minimal)
 
-  * ( C = {B} ) ✅ (covers both edges)
-  * ( C = {A,C} ) ✅ (also covers both edges)
-  * ( C = {A,B,C} ) ✅ (but not minimal)
+So, **minimum vertex cover size = 1** i.e, $[B]$.
 
-So, **minimum vertex cover size = 1** (the vertex {B}).
-
----
-
-## 🧮 **3. Relation to Matching**
-
-There’s a deep duality between **vertex cover** and **matching** (a set of edges with no shared vertices):
-
-* **Matching problem:** Find the **largest** set of non-overlapping edges.
-* **Vertex cover problem:** Find the **smallest** set of vertices that touch all edges.
-
-In **bipartite graphs**, these two have the *same* optimal value — that’s **König’s theorem**:
-
-[
-\boxed{\text{Maximum Matching Size} = \text{Minimum Vertex Cover Size}}
-]
-
----
-
-## ⚙️ **4. Complexity**
-
+### Complexity:
 * For **general graphs** (not necessarily bipartite),
-  the Vertex Cover Problem is **NP-hard** — we don’t know any polynomial-time algorithm to find the minimum one.
+  the Vertex Cover Problem is **NP-hard**; we don’t know any polynomial-time algorithm to find the minimum one.
 
-* For **bipartite graphs**, however, König’s theorem + polynomial matching algorithms (like Hopcroft–Karp) give a **polynomial-time solution**.
+* For **bipartite graphs**, however, König’s theorem + polynomial matching algorithms (like Kuhn's Matching) give a **polynomial-time solution**.
 
----
+### Connection to Independent Set:
+*Complementary view:*
+An **independent set** is a set of vertices with **no edges** between them. If $I$ is an independent set, then $V \setminus I$ is a vertex cover. So:
 
-## 🧠 **5. Connection to Independent Set**
+$$\text{Max Independent Set} + \text{Min Vertex Cover} = |V|$$
 
-Complementary view:
-
-An **independent set** is a set of vertices with **no edges** between them.
-If ( I ) is an independent set, then ( V \setminus I ) is a vertex cover.
-
-So:
-[
-\text{Max Independent Set} + \text{Min Vertex Cover} = |V|
-]
-and since maximum independent set is also NP-hard, so is minimum vertex cover.
+Since maximum independent set is also NP-hard, so is minimum vertex cover.
 
 ---
 
-## 🧭 Summary
+## **What is a Matching?**
 
-| Concept              | Description                           |
-| -------------------- | ------------------------------------- |
-| **Vertex cover**     | Set of vertices touching all edges    |
-| **Goal**             | Find smallest such set                |
-| **Bipartite graphs** | Solvable efficiently (via matching)   |
-| **General graphs**   | NP-hard                               |
-| **Relation**         | Complement of maximum independent set |
+Given a graph $G = (V, E)$ a **matching** $M \subseteq E$ is a set of edges such that **no two edges share a common vertex**. Formally:
+$$
+\forall (u_1,v_1),(u_2,v_2)\in M,\quad {u_1,v_1}\cap{u_2,v_2} = \emptyset
+$$
+> So each vertex is incident to **at most one edge** of the matching.
+
+### Maximum Matching Problem:
+
+The **maximum matching problem** asks to find a matching $M$ of **maximum cardinality** (i.e., with the largest number of edges). That is:
+$$
+\text{Maximize } |M|\quad\text{subject to } M \text{ is a matching in } G
+$$
+
+### Example:
+```
+A --- B --- C --- D
+```
+Possible matchings:
+
+* $ M_1 = [AB]$ 
+* $ M_2 = [BC]$ 
+* $ M_3 = [CD]$ 
+* $ M_4 = [AB, CD]$ 
+
+Maximum matching size = **2** i.e, $[AB,CD]$.
+
+### Complexity:
+
+**For bipartite graphs:**
+
+* The problem can be solved in **polynomial time**.
+* **Hopcroft–Karp algorithm** → $ O(E\sqrt{V}) $, **Kuhn's algorithm** → $ O(EV) $
+* Can also be reduced to a **maximum flow** problem.
+
+**For general (non-bipartite)** graphs:
+
+* Solved using **Edmonds’ Blossom algorithm** (polynomial time but more complex $ O(EV^2) $ ).
+
+### Connection to Vertex Cover (König’s Theorem):
+
+There’s a deep duality between **vertex cover** and **matching**. In **bipartite graphs**, these two have the *same* optimal value; that’s **König’s theorem**:
+
+$$
+\boxed{\text{Maximum Matching Size} = \text{Minimum Vertex Cover Size}}
+$$
+
+### Example Combining Both:
+
+Let’s take the bipartite graph:
+
+```
+X1 --- Y1
+ |      |
+ |      |
+X2 --- Y2
+```
+
+* Maximum Matching: size = 2; $[X1Y1, X2,Y2]$
+* Minimum Vertex Cover: size = 2; $[X1, Y2]$
 
 ---
 
-Would you like me to show how to **formulate it as an integer linear program (ILP)** or **how to find it using matching (in bipartite case)** next?
+## König’s theorem
+In any finite bipartite graph $G=(X\cup Y, E)$ the size of a maximum matching equals the size of a minimum vertex cover:
+$$\tau(G)=\nu(G) $$
+Where $\tau(G)$ is the maximum number of pairwise disjoint edges (maximum matching size) and $\nu(G)$ is the minimum number of vertices meeting every edge (minimum vertex cover size). We prove $\tau(G)\le\nu(G)$ and then show $\nu(G)\le\tau(G)$ by constructing a vertex cover of size equal to a maximum matching.
 
+### Easy direction:
+Every edge in a matching must be covered by distinct vertices of any vertex cover (no two matched edges share an endpoint in a matching). Thus a vertex cover must contain at least one endpoint from each matched edge; so the cover size is at least the matching size. Hence 
+$$\tau(G)\le\nu(G)$$
 
+### Constructing a cover of size $\tau(G)$:
+Let $M$ be a maximum matching in the bipartite graph $G=(X\cup Y,E)$. We will build a vertex cover $C$ with $|C|=|M|$, proving $\nu(G)\le|M|=\tau(G)$.
 
+#### Build the alternating-reachability set:
 
-# König’s theorem (vertex-cover form) — statement and proof
+* Call a vertex **free** if it is *not* incident to any edge of $M$.
+* Consider the directed exploration that starts from all free vertices in $X$ and follows **alternating paths**:
+  * From a vertex in $X$ follow edges **not** in $M$ to $Y$.
+  * From a vertex in $Y$ follow edges **in** $M$ to $X$.
+* Let $Z$ be the set of vertices reachable from free vertices of $X$ by such alternating paths. Partition $Z$ as $Z_X=Z\cap X$ and $Z_Y=Z\cap Y$.
 
-**Theorem (König).**
-In any finite bipartite graph (G=(X\cup Y, E)) the size of a maximum matching equals the size of a minimum vertex cover:
-[
-\nu(G)=\tau(G),
-]
-where (\nu(G)) is the maximum number of pairwise disjoint edges (maximum matching size) and (\tau(G)) is the minimum number of vertices meeting every edge (minimum vertex cover size).
+> Intuition: $Z$ is exactly the set of vertices reachable by alternating paths starting at unmatched left-side vertices.
 
-We prove (\nu(G)\le\tau(G)) (easy) and then show (\tau(G)\le\nu(G)) by constructing a vertex cover of size equal to a maximum matching.
-
----
-
-## 1. Easy direction: (\nu(G)\le\tau(G))
-
-Every edge in a matching must be covered by distinct vertices of any vertex cover (no two matched edges share an endpoint in a matching). Thus a vertex cover must contain at least one endpoint from each matched edge; so the cover size is at least the matching size. Hence (\nu(G)\le\tau(G)).
-
----
-
-## 2. Constructing a cover of size (\nu(G))
-
-Let (M) be a maximum matching in the bipartite graph (G=(X\cup Y,E)). We will build a vertex cover (C) with (|C|=|M|), proving (\tau(G)\le|M|=\nu(G)).
-
-### 2.1 Build the alternating-reachability set
-
-* Call a vertex **free** if it is *not* incident to any edge of (M).
-* Consider the directed exploration that starts from all free vertices in (X) and follows **alternating paths**:
-
-  * From a vertex in (X) follow edges **not** in (M) to (Y).
-  * From a vertex in (Y) follow edges **in** (M) to (X).
-* Let (Z) be the set of vertices reachable from free vertices of (X) by such alternating paths. Partition (Z) as (Z_X=Z\cap X) and (Z_Y=Z\cap Y).
-
-Intuition: (Z) is exactly the set of vertices reachable by alternating paths starting at unmatched left-side vertices.
-
-### 2.2 Define the candidate cover
-
-Define
-[
+#### Define the candidate cover:
+$
 C = (X\setminus Z_X)\ \cup\ (Z_Y).
-]
-In words: take all vertices of (X) that were **not** reached, together with all vertices of (Y) that **were** reached.
+$
+> In words: take all vertices of $X$ that were **not** reached, together with all vertices of $Y$ that **were** reached.
+We will show; $C$ is a vertex cover and $|C|=|M|$.
 
-We will show (i) (C) is a vertex cover and (ii) (|C|=|M|).
+#### $C$ is a vertex cover:
 
----
+Take any edge $e=uv$ with $u\in X$, $v\in Y$. We show $u\in C$ or $v\in C$.
 
-### 2.3 (C) is a vertex cover
+* If $u\in Z_X$ then by the definition of $Z$ every edge $u w$ not in $M$ that is outgoing from $u$ to $Y$ leads to a reachable $w\in Z_Y$. In particular, if $uv\in E$ and $uv\notin M$, then $v\in Z_Y\subseteq C$.
+* If $uv\in M$, and $u\in Z_X$, then the matched edge from $u$ goes to some $v$; but our alternating reachability rules ensure that when a vertex in $X$ is reachable, the matched edge $if any$ goes to the corresponding $Y$ vertex only if that $Y$ vertex is also reachable; so again $v\in Z_Y\subseteq C$.
+* If $u\notin Z_X$, then $u\in X\setminus Z_X\subseteq C$.
 
-Take any edge (e=uv) with (u\in X), (v\in Y). We show (u\in C) or (v\in C).
+Thus every edge has at least one endpoint in $C$. So $C$ is a vertex cover.
 
-* If (u\in Z_X) then by the definition of (Z) every edge (u w) not in (M) that is outgoing from (u) to (Y) leads to a reachable (w\in Z_Y). In particular, if (uv\in E) and (uv\notin M), then (v\in Z_Y\subseteq C).
-* If (uv\in M), and (u\in Z_X), then the matched edge from (u) goes to some (v) — but our alternating reachability rules ensure that when a vertex in (X) is reachable, the matched edge (if any) goes to the corresponding (Y) vertex only if that (Y) vertex is also reachable; so again (v\in Z_Y\subseteq C).
-* If (u\notin Z_X), then (u\in X\setminus Z_X\subseteq C).
+>*A compact way to see this: if an edge has its $X$-endpoint reachable then its $Y$-endpoint is reachable too (by alternating-step rules) and so in $C$; otherwise the $X$-endpoint itself is in $C$.*
 
-Thus every edge has at least one endpoint in (C). So (C) is a vertex cover.
+#### Proving $|C|=|M|$:
 
-*(A compact way to see this: if an edge has its (X)-endpoint reachable then its (Y)-endpoint is reachable too (by alternating-step rules) and so in (C); otherwise the (X)-endpoint itself is in (C).)*
+We count how many vertices of $C$ come from $X$ and from $Y$.
 
----
+**Claim A.** Every vertex of $Z_Y$ is matched (incident to an $M$-edge).
+Proof: If $y\in Z_Y$ is reachable by an alternating path, the path alternates and the last step to $y$ came along a non-matching edge from some $x\in Z_X$; but by the alternating rules from $y$ we follow the matching-edge (if any) to continue. If $y$ were unmatched, the alternating path from a free $x$ to $y$ would be an augmenting path (starts and ends at free vertices and alternates), contradicting maximality of $M$. So all vertices in $Z_Y$ are matched.
 
-### 2.4 (|C|=|M|)
+**Claim B.** Every vertex of $X\setminus Z_X$ is matched.
+Proof: If $x\in X\setminus Z_X$ were unmatched $free$, then it would have been in the starting set of the exploration and thus in $Z_X$. So it must be matched.
 
-We count how many vertices of (C) come from (X) and from (Y).
+Thus every vertex in $C=(X\setminus Z_X)\cup Z_Y$ is matched by $M$. Moreover, each matched edge of $M$ has exactly one endpoint in $C$:
 
-**Claim A.** Every vertex of (Z_Y) is matched (incident to an (M)-edge).
-Proof: If (y\in Z_Y) is reachable by an alternating path, the path alternates and the last step to (y) came along a non-matching edge from some (x\in Z_X); but by the alternating rules from (y) we follow the matching-edge (if any) to continue. If (y) were unmatched, the alternating path from a free (x) to (y) would be an augmenting path (starts and ends at free vertices and alternates), contradicting maximality of (M). So all vertices in (Z_Y) are matched.
+* If an edge $xy\in M$ has $x\in X\setminus Z_X$, then $x\in C$ while $y\notin Z_Y$ (otherwise $x$ would be reachable via that matched edge), so $y\notin C$.
+* If $x\in Z_X$, then matching forces $y\in Z_Y$; then $y\in C$ while $x\notin C$.
 
-**Claim B.** Every vertex of (X\setminus Z_X) is matched.
-Proof: If (x\in X\setminus Z_X) were unmatched (free), then it would have been in the starting set of the exploration and thus in (Z_X). So it must be matched.
-
-Thus every vertex in (C=(X\setminus Z_X)\cup Z_Y) is matched by (M). Moreover, each matched edge of (M) has exactly one endpoint in (C):
-
-* If an edge (xy\in M) has (x\in X\setminus Z_X), then (x\in C) while (y\notin Z_Y) (otherwise (x) would be reachable via that matched edge), so (y\notin C).
-* If (x\in Z_X), then matching forces (y\in Z_Y); then (y\in C) while (x\notin C).
-
-Therefore the matched edges give a bijection between elements of (M) and vertices of (C): each matched edge contributes exactly one vertex to (C), and every vertex of (C) is matched and corresponds to a distinct matched edge. So (|C|=|M|).
+> Therefore the matched edges give a bijection between elements of $M$ and vertices of $C$: each matched edge contributes exactly one vertex to $C$, and every vertex of $C$ is matched and corresponds to a distinct matched edge. So $|C|=|M|$.
 
 ---
+## Implementation of Bipartite Vertex Cover Problem
+**Directory:** ```bip_vertex_cover```
+**Problem Statement:** To find the **Veterx Cover** of an input Bipartite Graph, and to visualise the results using a python script.
+#### Implementation Workflow:
 
-## 3. Conclusion
+* The C++ driver program ```main.cpp``` reads multiple test cases from ```tests.txt```.
+* Bipartite Vertex Cover Framework (`utils.hpp`):
+  * Verifies if a graph is bipartite using 2-Coloring algorihm and outputs the Left and Right subgraphs
+  * Uses Kuhn's Algorithm to find the maximum matching in the given bipartite gtaph
+  * Uses Konig's Theorem to find the **Vertex Cover** from the given matching.
+  * Outputs the Vertex Cover to the `main` file.
+* The outputs from the `main` are passed on to the `visualise.py` as directive for plotting graphs and representing the vertex cover.
+* `run_all.sh` is a bash script to automate the process of creating graph plots.
 
-From part 1 we had (\nu(G)\le\tau(G)). From part 2 we constructed a vertex cover (C) with (|C|=|M|) for a maximum matching (M), hence (\tau(G)\le|M|=\nu(G)). Combining,
-[
-\nu(G)=\tau(G).
-]
-That proves König’s theorem.
+#### Kuhn’s Algorithm — Explanation (Short)
+Kuhn’s algorithm is a **DFS-based augmenting path algorithm** for maximum bipartite matching.
+1. For each left vertex $u$, try to find an augmenting path using DFS.
+2. If an unmatched right vertex is found, or we can re-route an existing match, we match $u$.
+3. Each DFS either:
+   * increases the matching size by 1, or
+   * returns false.
+> Worst case: **O(V × E)**
 
+#### Minimum Vertex Cover Using König’s Theorem
+Given a maximum matching $M$, the minimum vertex cover in bipartite graphs is computed by:
+1. Mark all **unmatched left vertices**.
+2. Run DFS/BFS alternating between:
+   * **non-matching edges (L → R)**
+   * **matching edges (R → L)**
+3. Let:
+   * `visL` = visited left vertices
+   * `visR` = visited right vertices
+4. The minimum vertex cover is:
+```
+(Left \ visL)  ∪  (Right ∩ visR)
+```
+> **Total Complexity:** 
+  Building adjacency: **O(E)**
+  DFS alternation: **O(V + E)**
+  Total: **O(V × E)** (due to matching step dominating)
+
+
+
+#### Python Visualization Workflow
+A Python script reads the C++ output:
+* Draws the original graph using NetworkX
+* Colors:
+  * **Vertex cover nodes** in green
+  * Others in blue
+  * Improper edges in dashed red (if user-specified L/R fails)
+* Saves images into `visuals/graph_i.png`
+
+Run as:
+
+```bash
+python3 visualize.py < output_for_python.txt
+```
+
+#### Input Format (`tests.txt`)
+Each test case:
+
+```
+num_vertices num_edges
+u v
+u v
+...
+```
+
+Example:
+
+```
+4 4
+0 1
+1 2
+2 3
+3 0
+```
+
+Output: 
+<img src="bip_vertex_cover/visuals/graph_1.png" width="450">
+
+#### Running Everything
+
+We provide a script `run_all.sh`, to run everything at once. Run with:
+
+```bash
+./run_all.sh
+```
 ---
 
-## Remarks
+## Chart Minimisation Problem
+**Directory:** ```chart_minimisation```
+**Problem Statement:** Given the price history of $ n $ stocks over $ k $ time points, we want to visualize these stocks using the **minimum number of charts**, where:
+  * Each chart may display **multiple stocks**, and
+  * A stock $A$ can be placed together with another stock *$B*$ on the same chart *only if* stock $A$ is strictly lower than stock $B$ at **every time point**.
+Formally, for two stocks represented as vectors:
+  $$
+  A = (A_1, A_2, \dots, A_k), \quad
+  B = (B_1, B_2, \dots, B_k)
+  $$
+Stock $ A $ can appear on the same chart as stock $ B $ if:
+$$
+A_i < B_i \quad \text{for all } i = 1, 2, \dots, k
+$$
+This defines a **partial order** among the stocks.
 
-* The proof is constructive: given a maximum matching one can efficiently produce a minimum vertex cover via the alternating-reachability sets (this is the classical proof used in algorithms such as the Hopcroft–Karp algorithm).
-* A dual statement (Kőnig–Egerváry theorem) relates maximum matching and minimum vertex cover in bipartite graphs; for general graphs the equality need not hold.
+It is a direct instance of a very important and widely applicable combinatorial problem:
+> **Minimum Path Cover in a DAG** ↔ **Maximum Matching in a Bipartite Graph**
+**Minimum Path Cover:** Smallest possible number of paths needed to cover all vertices without breaking the direction constraints.
+
+This problem can be extended to a range of real world problems such as;
+* Task Scheduling with Precedence Constraints
+* Exam or Class Timetabling
+* Layering and Ranking in Graph Drawing
+* Comparative Genomics / DNA Sequence Evolution
+
+#### Graph-Theoretic Reformulation
+1. Create a directed edge $ A \to B $ if stock $ A $ is strictly lower than stock $ B $ at all time points.
+2. Convert this DAG into a bipartite graph by duplicating nodes into Left and Right partitions.
+3. Find the **maximum bipartite matching**, which corresponds to the maximum number of stock pairs that can be placed consecutively on a single chart.
+4. Using **Dilworth’s theorem / minimum path cover in DAGs**, the **minimum number of charts required** is:
+$$
+\text{Minimum Charts} = n - \text{size of maximum matching}
+$$
 
 
-## Applications
+#### Implementation Workflow:
 
-1) Stock Overlaid Chart Minimization (Your Problem) 📊
+* The C++ driver program ```main.cpp``` reads multiple test cases from ```tests.txt```.
 
-    ### Dilworth's Theorem
-
-    Application: Determining the minimum number of overlaid charts required to display the performance of n stocks such that no two lines in a single chart cross.
-
-    Description: This problem can be transformed into finding a minimum path cover in a directed acyclic graph (DAG) where the vertices are the stocks. If we create a bipartite graph where an edge exists between two stocks if their lines must cross, the problem becomes finding the minimum number of groups (charts) such that no two stocks in the same group have an edge between them. The final connection is that the minimum number of paths needed to cover all vertices in a DAG is equal to n−∣M∣, where n is the number of vertices and ∣M∣ is the size of the maximum matching in an associated bipartite graph (derived from the DAG's structure). This is a direct application of Dilworth's theorem/Minimum Path Cover theorem, which is strongly linked to maximum matching in bipartite graphs.
-
-2) Logic Minimization/Circuit Design 💡
-
-    Application: Optimizing the design of digital logic circuits (e.g., using Karnaugh maps or Quine-McCluskey).
-
-    Description: The process involves finding a minimum set of prime implicants to cover all the minterms (product terms corresponding to 1s in the output) of a Boolean function. This is a classic Set Cover problem. While Set Cover is generally NP-hard, if the underlying structure of the cover problem can be mapped to a bipartite graph's minimum vertex cover (which is polynomial-time solvable via maximum matching), König's theorem provides the theoretical foundation for the efficient solution.
-
-3) Network Security/Covering Attacks 🛡️
-
-    Application: Identifying the minimum set of nodes (routers, servers) to monitor to detect all potential malicious communication paths.
-
-    Description: If a communication network can be modeled as a bipartite graph (perhaps between different subnets), finding the minimum vertex cover (the smallest set of nodes to monitor to intercept every communication link/edge) is crucial. König's theorem ensures this minimum set can be found efficiently by calculating the maximum matching in the network's bipartite representation.
-
-4) Resource Allocation/Test Case Reduction 🧪
-
-    Application: Minimizing the number of test cases required to cover all necessary conditions or code paths in software testing.
-
-    Description: Similar to the logic minimization, this involves creating a bipartite graph between "Test Cases" and "Conditions/Code Paths." An edge exists if a test case covers a condition. Finding the minimum number of test cases (a minimum vertex cover in the test case side) needed to cover all conditions can sometimes be solved or approximated using maximum matching techniques rooted in König's theorem.
-
-5) Graph Decompositions/Edge Coloring 🎨
-
-    Application: Finding the minimum number of colors needed to color the edges of a bipartite graph such that no two edges incident to the same vertex have the same color.
-
-    Description: By König's edge coloring theorem, the chromatic index χ′(G) (the minimum number of colors) for a bipartite graph G is equal to its maximum degree Δ(G). While this is a different "König's theorem," it is deeply related to matching theory. Furthermore, finding a decomposition of a graph into a minimum number of matchings is a related problem where maximum matching provides the core building block for an efficient solution.
-
-6) Job Assignment/Maximum Bipartite Matching 🧑‍💻
-
-    Application: Optimally assigning jobs to workers or tasks to machines.
-
-    Description: This is the most direct and common application. Given a set of workers and a set of jobs, and a list of which worker can perform which job, the problem is to find the maximum number of jobs that can be assigned to different workers (one-to-one). König's theorem guarantees that the maximum number of such assignments (maximum matching) is equal to the minimum number of workers or jobs you need to select (minimum vertex cover) to "cover" all possible assignment links.
+* The outputs from the `main` are passed on to the `visualise.py` as directive for plotting graphs and representing the vertex cover.
+* `run_all.sh` is a bash script to automate the process of creating graph plots.
 
 ## References
 
