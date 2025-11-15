@@ -1,4 +1,5 @@
 #include "../include/utils.hpp"
+#include "../include/utils_chart.hpp"
 #include <iostream>
 #include <vector>
 #include <algorithm>
@@ -46,53 +47,8 @@ vector<vector<int>> MinCharts(const vector<vector<int>> &stock_data)
     vector<int> match_left_org = Utils::find_matching(adj, left, right);
     // match_left_org is sized 2n (graph.size()), entries for left-original indices (0..n-1) give matched right-original id (n+j) or -1
 
-    // Build successor mapping succ[u] = v where u -> v in chain (using original stock ids 0..n-1)
-    // For left original id u (0..n-1), match_left_org[u] either -1 or equals (n + v)
-    vector<int> succ(n, -1);
-    vector<int> pred(n, -1); // reverse link to find starts
-    int matching_size = 0;
-    for (int u = 0; u < n; ++u) {
-        int v_orig = match_left_org[u]; // this should be either -1 or n+v
-        if (v_orig != -1) {
-            int v = v_orig - n;
-            if (v >= 0 && v < n) {
-                succ[u] = v;
-                pred[v] = u;
-                ++matching_size;
-            }
-        }
-    }
-
-    // Number of chains = n - matching_size
-
-    // Build chains by starting at nodes with no predecessor (pred == -1)
-    vector<vector<int>> chains;
-    vector<char> used(n, 0);
-    for (int u = 0; u < n; ++u) {
-        if (pred[u] == -1) { // start of a chain
-            int cur = u;
-            vector<int> chain;
-            while (cur != -1 && !used[cur]) {
-                chain.push_back(cur);
-                used[cur] = 1;
-                cur = succ[cur];
-            }
-            if (!chain.empty())
-                chains.push_back(move(chain));
-        }
-    }
-
-    // In case of cycles or leftover nodes (shouldn't happen in strict partial order),
-    // add any remaining unused nodes as singleton chains.
-    for (int u = 0; u < n; ++u) {
-        if (!used[u]) {
-            chains.push_back(vector<int>{u});
-        }
-    }
-
-    // Debug print (optional): Uncomment for verification
-    // cout << "n=" << n << " matching_size=" << matching_size << " min_chains=" << (n - matching_size) << "\n";
-
+    // Build chains 
+    vector<vector<int>> chains = Utils_Chart::build_chain(n, match_left_org);
     return chains;
 }
 
